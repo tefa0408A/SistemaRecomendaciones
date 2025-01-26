@@ -1,14 +1,21 @@
 package com.example.SistemaRecomendaciones.service.impl;
 
 import com.example.SistemaRecomendaciones.aggregates.constants.Constants;
+import com.example.SistemaRecomendaciones.aggregates.request.SignInRequest;
 import com.example.SistemaRecomendaciones.aggregates.request.SignUpRequest;
+import com.example.SistemaRecomendaciones.aggregates.response.SignInResponse;
 import com.example.SistemaRecomendaciones.entity.Rol;
 import com.example.SistemaRecomendaciones.entity.Role;
 import com.example.SistemaRecomendaciones.entity.Usuario;
 import com.example.SistemaRecomendaciones.repository.RolRepository;
 import com.example.SistemaRecomendaciones.repository.UsuarioRepository;
 import com.example.SistemaRecomendaciones.service.AuthenticationService;
+import com.example.SistemaRecomendaciones.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -20,6 +27,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     @Override
     public Usuario signUpUser(SignUpRequest signUpRequest) {
@@ -33,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .nombres(signUpRequest.getNombres())
                 .apellidos(signUpRequest.getApellidos())
                 .email(signUpRequest.getEmail())
-                .password(signUpRequest.getPassword())
+                .password(new BCryptPasswordEncoder().encode(signUpRequest.getPassword()))
                 .isAccountNonExpired(Constants.STATUS_ACTIVE)
                 .isAccountNonLocked(Constants.STATUS_ACTIVE)
                 .isCredentialsNonExpired(Constants.STATUS_ACTIVE)
@@ -53,6 +62,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return usuarioRepository.findAll();
     }
 
+
+    @Override
+    public SignInResponse signIn(SignInRequest signInRequest) {
+        //nos avisa si se ha logueado correctamente
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                signInRequest.getEmail(),signInRequest.getPassword()));
+
+        var user = usuarioRepository.findByEmail(signInRequest.getEmail()).orElseThrow(
+                () -> new UsernameNotFoundException("Error usuario no encontrado en bd")
+        );
+        var token = jwtService.generateToken(user);
+
+        return SignInResponse.builder().token(token).build();
+    }
 
     private Rol getRoles (Role rolBuscado){
         return rolRepository.findByNombreRol(rolBuscado.name())
