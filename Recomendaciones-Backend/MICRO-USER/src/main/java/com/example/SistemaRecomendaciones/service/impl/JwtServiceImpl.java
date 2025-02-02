@@ -53,6 +53,17 @@ public class JwtServiceImpl implements JwtService {
     }
 
 
+    @Override
+    public String generateRefreshToken(Map<String, Object> extraClaim, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(addClaim(userDetails))
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .claim("userCreated",Constants.USER_ADMIN)
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
     //GENERAR METODOS DE APOYO PARA INTERACTUAR EL TOKEN
 
     //METODO PARA FIRMAR EL TOKEN
@@ -88,4 +99,6 @@ public class JwtServiceImpl implements JwtService {
         claims.put(Constants.CLAVE_Enabled, userDetails.isEnabled());
         return claims;
     }
+
+
 }
