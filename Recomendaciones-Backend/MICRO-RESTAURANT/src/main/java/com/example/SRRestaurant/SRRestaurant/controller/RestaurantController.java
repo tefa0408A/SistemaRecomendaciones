@@ -1,9 +1,9 @@
-package com.example.controller;
+package com.example.SRRestaurant.SRRestaurant.controller;
 
-import com.example.entity.RestaurantEntity;
-import com.example.service.RestaurantService;
+import com.example.SRRestaurant.SRRestaurant.entity.RestaurantEntity;
+import com.example.SRRestaurant.SRRestaurant.service.RestaurantService;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,11 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/restaurant/v1")
-@Log4j
+@Log4j2
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
-
     // Constructor con la inyección de dependencias
     public RestaurantController(RestaurantService restaurantService) {
         this.restaurantService = restaurantService;

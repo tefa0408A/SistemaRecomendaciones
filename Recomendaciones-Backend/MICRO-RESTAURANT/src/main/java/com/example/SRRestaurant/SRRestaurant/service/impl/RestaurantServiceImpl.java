@@ -1,8 +1,8 @@
-package com.example.service.impl;
+package com.example.SRRestaurant.SRRestaurant.service.impl;
 
-import com.example.entity.RestaurantEntity;
-import com.example.repository.RestaurantRepository;
-import com.example.service.RestaurantService;
+import com.example.SRRestaurant.SRRestaurant.entity.RestaurantEntity;
+import com.example.SRRestaurant.SRRestaurant.repository.RestaurantRepository;
+import com.example.SRRestaurant.SRRestaurant.service.RestaurantService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
