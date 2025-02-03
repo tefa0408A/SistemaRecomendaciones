@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-// import { FaUserCircle, FaSearch } from "react-icons/fa";
 import { FaUserCircle } from "react-icons/fa";
 import logo from '../assets/logo.svg'
-import LoginModal from "./login-modal";
 import SearchBox from "./search-box";
+import Autenticacion from "./autenticacion-modal";
 
 const Header = ({ isLoggedIn, setIsLoggedIn }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showOpinarMenu, setShowOpinarMenu] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
 
   const handleOutsideClick = (event) => {
     if (!event.target.closest(".dropdown") && !event.target.closest(".opinar-menu")) {
@@ -60,10 +58,9 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
             )}
           </div>
         ) : (
-          <button className="nav-item" onClick={() => setShowLogin(true)}>Iniciar Sesión</button>
+          <Autenticacion setIsLoggedIn={setIsLoggedIn} />
         )}
       </nav>
-      {showLogin && <LoginModal setShowLogin={setShowLogin} setIsLoggedIn={setIsLoggedIn} />}
     </header>
   );
 };

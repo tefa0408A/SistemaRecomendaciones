@@ -9,7 +9,7 @@ const SearchBox = () => {
   const [showSearchModal, setShowSearchModal] = useState(false);
 
   const navigate = useNavigate();
-  const searchRef = useRef(null); // Referencia para detectar clics fuera del modal
+  const searchRef = useRef(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
