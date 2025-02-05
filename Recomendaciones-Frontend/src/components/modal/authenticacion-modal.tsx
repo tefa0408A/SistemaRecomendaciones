@@ -1,19 +1,20 @@
 import { useState } from "react";
 import Login from "./login-modal";
-import CrearUsuario from "./crear-usuario";
+import CrearUsuario from "../funcionalidad/user-create";
+import { Button } from "../ui/button";
 
-const Autenticacion = ({ setIsLoggedIn }) => {
+const Authenticacion = ({ login }) => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-  
+
   return (
     <div>
-      <button onClick={() => setShowLogin(true)}>Iniciar Sesión</button>
+      <Button onClick={() => setShowLogin(true)}>Iniciar Sesión</Button>
       {showLogin && (
         <Login
           setShowLogin={setShowLogin}
           setShowRegister={setShowRegister}
-          setIsLoggedIn={setIsLoggedIn}
+          login={login}
         />
       )}
       {showRegister && (
@@ -26,4 +27,4 @@ const Autenticacion = ({ setIsLoggedIn }) => {
   );
 };
 
-export default Autenticacion;
+export default Authenticacion;

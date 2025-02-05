@@ -1,3 +1,10 @@
-const Home = () => <><h2>Home</h2></>;
 
-export default Home;
+import { withLayout } from '../HOC/withLayout'
+
+const Home = () => {
+  return (
+    <div>home</div>
+  )
+}
+
+export default withLayout(Home)

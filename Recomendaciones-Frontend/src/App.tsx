@@ -1,27 +1,24 @@
-import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-import "./styles/style.css";
-import Home from "./pages/home";
-import Header from "./components/header";
-import Opinar from "./pages/opinar";
-import Perfil from "./pages/perfil";
-import Cafeteria from "./pages/cafeteria";
+import { Route, Routes } from "react-router"
+import HomePage from "./pages/home"
+import CafeDetailPage from "./pages/cafe-detail"
+import CafeOpinionPage from "./pages/cafe-opinion"
+import { ThemeProvider } from "./context/theme-context"
+import { AuthProvider } from "./context/auth-context";
+import CafePhotoUploadPage from "./pages/cafe-photoshare"
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   return (
-    <Router>
-      <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/opinar" element={<Opinar />} />
-        <Route path="/perfil" element={<Perfil />} />
-        <Route path="/cafeteria/:id" element={<Cafeteria />} />
-      </Routes>
-    </Router>
-  );
+    <ThemeProvider defaultTheme="system">
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/cafe/opinion" element={<CafeOpinionPage />} />
+          <Route path="/cafe/:id" element={<CafeDetailPage />} />
+          <Route path="/cafe/photos/upload" element={<CafePhotoUploadPage />} />
+        </Routes>
+      </AuthProvider>
+    </ThemeProvider>
+  )
 }
 
 export default App
