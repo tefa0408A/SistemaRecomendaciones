@@ -1,5 +1,11 @@
-const BarraDeProgreso = ({ comments }) => {
-  const calificacionesMap = {
+import type { Review } from "../lib/types";
+
+interface BarraDeProgresoProps {
+  comments: Review[];
+}
+
+const BarraDeProgreso = ({ comments }: BarraDeProgresoProps) => {
+  const calificacionesMap: Record<number, string> = {
     5: "Excelente",
     4: "Muy Bueno",
     3: "Regular",
@@ -7,31 +13,28 @@ const BarraDeProgreso = ({ comments }) => {
     1: "Pésimo",
   };
 
-
-  // Contamos las calificaciones
-  const conteo = comments.reduce((acc, comment) => {
+  const conteo = comments.reduce<Record<number, number>>((acc, comment) => {
     const rating = comment.calificacion;
     acc[rating] = (acc[rating] || 0) + 1;
     return acc;
   }, {});
 
-
-  // Convertimos a formato compatible con la barra de progreso
   const nuevoObjeto = Object.keys(calificacionesMap)
-    .map((key) => ({
-      key: Number(key), // Convertimos la key a número para ordenar
-      nombre: calificacionesMap[key],
-      cantidad: conteo[key] || 0,
-    }))
-    .sort((a, b) => b.key - a.key); // Orden descendente (5 → 4 → 3 → 2 → 1)
+    .map((key) => {
+      const numericKey = Number(key); // Convertir la clave a número
+      return {
+        key: numericKey,
+        nombre: calificacionesMap[numericKey], // Acceder con número
+        cantidad: conteo[numericKey] || 0, // Acceder con número
+      };
+    })
+    .sort((a, b) => b.key - a.key); 
 
-
-  // Ahora sí, calculamos totalCalificaciones usando `nuevoObjeto`
   const totalCalificaciones = nuevoObjeto.reduce((acc, item) => acc + item.cantidad, 0);
 
   return (
     <>
-      <h2 className="text-lg font-semibold mb-4">{totalCalificaciones}{" "}{totalCalificaciones > 0 ? "Calificaciones" : "Calificación"}</h2>
+      <h2 className="text-lg font-semibold mb-4">{totalCalificaciones}{" "}{totalCalificaciones == 1 ? "Calificación" : "Calificaciones"}</h2>
 
       {nuevoObjeto.map((item) => {
         const porcentaje = totalCalificaciones > 0 ? (item.cantidad / totalCalificaciones) * 100 : 0;

@@ -1,27 +1,36 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { withLayout } from '../HOC/withLayout';
-import { Dot, MapPin, PhoneCall, Star, Store, User } from 'lucide-react';
+import { Dot, Loader, MapPin, PhoneCall, Star, Store, User } from 'lucide-react';
 import BarraDeProgreso from '../components/externos/barra-progreso';
 import { useAuth } from "../context/auth-context";
+import { useCreateReview, useReviews } from '../hook/use-review';
+import type { Review, ReviewFormData } from '../components/lib/types';
+import { useCafe } from '../hook/use-cafe';
 
 const CafeDetailPage = () => {
-  const { isTokenValid, setIsShowLogin } = useAuth();
 
-  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string;
   const { id } = useParams();
+  const { data: reviews, isLoading: isLoadingReviews, error: errorReviews } = useReviews(Number(id));
+  const { data: cafe, isLoading: isLoadingCafe, error: errorCafe } = useCafe(Number(id));
+  const createMutation = useCreateReview(Number(id));
 
-  const [cafe, setCafe] = useState({});
+  const { isTokenValid, setIsShowLogin } = useAuth();
+  const navigate = useNavigate()
+  
   const [opinion, setOpinion] = useState("");
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<Review[]>([]);
+
+  
+
   const [visibleCount, setVisibleCount] = useState(5);
   const [rating, setRating] = useState(0);
-  const [error, setError] = useState("");
+  const [errorValidacion, setErrorValidacion] = useState("");
 
   // Función para actualizar la calificación
-  const handleClick = (index) => {
+  const handleClick = (index : number) => {
     setRating(index);
-    setError(""); // Si selecciona, borra el error
+    setErrorValidacion(""); // Si selecciona, borra el error
   };
 
 
@@ -30,12 +39,12 @@ const CafeDetailPage = () => {
   };
 
   // Función para manejar el cambio en el textarea
-  const handleOpinionChange = (event) => {
+  const handleOpinionChange = (event: any) => {
     setOpinion(event.target.value);
   };
 
   // Función para manejar la publicación de una nueva opinión
-  const handlePublicar = () => {
+  const handlePublicar = async () => {
 
     if (!isTokenValid()) {
       console.log("Token no es valido")
@@ -44,75 +53,64 @@ const CafeDetailPage = () => {
     }
 
     if (opinion.trim() === "") {
-      setError("Debes escribir un comentario.");
-      return; 
-    }
-
-    if (rating === 0) {
-      setError("Debes seleccionar una calificación.");
+      setErrorValidacion("Debes escribir un comentario.");
       return;
     }
 
-    const token = localStorage.getItem("token");
+    if (rating === 0) {
+      setErrorValidacion("Debes seleccionar una calificación.");
+      return;
+    }
 
-    const nuevoComentario = {
+    const nuevoComentario: ReviewFormData = {
       comentario: opinion.trim(),
       calificacion: rating
     };
 
-    //Almacenar en BD
-    const fetchReview = async () => {
-      try {
-        const responseComentario = await fetch(`${API_URL}/api/restaurant/v1/${id}/comentario`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json", 
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(nuevoComentario),
-        });
 
-        const dataComentario = await responseComentario.json();
-        setComments([dataComentario, ...comments]);
-        setOpinion(""); 
-        handleClick(0)
+    try {
+      const dataComentario = await createMutation.mutateAsync(nuevoComentario);
+      setComments([dataComentario, ...comments]);
+      setOpinion("");
+      handleClick(0);
 
-      } catch (error) {
-        console.error("Error fetching Review:", error);
-      }
-    };
-
-    fetchReview();
+    } catch (error: any) {
+      console.log("Error al enviar la reseña: " + error.message);
+    }
   };
 
   useEffect(() => {
-    const fetchCafe = async () => {
-      try {
-        const responseDatos = await fetch(`${API_URL}/api/restaurant/v1/${id}`);
-        const dataCafe = await responseDatos.json();
-        setCafe(dataCafe);
-
-        const responseComentarios = await fetch(`${API_URL}/api/restaurant/v1/${id}/comentarios`);
-        const dataComentarios = await responseComentarios.json();
-        setComments(dataComentarios);
-      } catch (error) {
-        console.error("Error fetching cafe:", error);
-      }
-    };
-
-    fetchCafe();
-  }, []);
+    if(reviews && Array.isArray(reviews)) {
+      setComments([...reviews]);
+    }
+  }, [reviews]);
 
 
-  const formatFecha = (fechaISO) => {
+  if (isLoadingCafe || isLoadingReviews) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader className="animate-spin" />
+      </div>
+    );
+  }
+  if (errorCafe || !cafe) {
+    navigate("/")
+    return;
+  }
+
+  const formatFecha = (fechaISO: string) => {
     const fecha = new Date(fechaISO);
-    const opciones = { day: "2-digit", month: "long", year: "numeric" };
+    const opciones: Intl.DateTimeFormatOptions = {
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    };
 
     return fecha.toLocaleDateString("es-ES", opciones);
   };
 
   // Función para mostrar las estrellas
-  const renderStars = (rating) => {
+  const renderStars = (rating:any) => {
 
     const validRating = Number.isFinite(rating) ? Math.max(0, Math.min(5, rating)) : 0;
     const fullStars = Math.floor(validRating);
@@ -235,7 +233,7 @@ const CafeDetailPage = () => {
               </div>
 
               {/* Mensaje de error */}
-              {error && <p className="text-center text-red-500 text-sm">{error}</p>}
+              {errorValidacion && <p className="text-center text-red-500 text-sm">{errorValidacion}</p>}
 
               {/* Botón de enviar */}
               <button
@@ -249,10 +247,9 @@ const CafeDetailPage = () => {
 
 
           {comments
-            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+            .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
             .slice(0, visibleCount).map((comment) => (
               <div key={comment.id} className="mt-4 mb-4 p-4 border-t border-gray-300">
-                {/* Primera fila */}
                 <div className="flex items-center space-x-3">
                   <User className="h-6 w-6 text-gray-600 flex-shrink-0" />
                   <div>
@@ -261,10 +258,8 @@ const CafeDetailPage = () => {
                   </div>
                 </div>
 
-                {/* Segunda fila: Comentario */}
                 <p className="mt-2 text-gray-800">{comment.comentario}</p>
 
-                {/* Tercera fila: Fecha */}
                 <span className="mt-1 text-sm text-gray-500">
                   Escrito el {formatFecha(comment.fecha)}
                 </span>

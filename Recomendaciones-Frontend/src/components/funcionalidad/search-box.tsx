@@ -1,51 +1,37 @@
-import { Search } from "lucide-react";
+import { Loader, Search } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCafes } from "../../hook/use-cafe";
 
 const SearchBox = () => {
-  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string;
+
+  const { data: cafes, isLoading, error } = useCafes();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredResults, setFilteredResults] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
-
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
-
-  // Cargar productos desde la API
-  useEffect(() => {
-    const fetchCafes = async () => {
-      try {
-        const response = await fetch(`${API_URL}/api/restaurant/v1/all`);
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching cafes:", error);
-      }
-    };
-
-    fetchCafes();
-  }, []);
 
   // Filtrar productos en base al input
   useEffect(() => {
     let results = [];
+    if (!cafes) return;
+
     if (searchTerm.trim() === "") {
-      results = products.slice(0, 5); // Mostrar primeros 10 productos como "favoritos"
+      results = cafes.slice(0, 5); 
     } else {
-      results = products
+      results = cafes
         .filter(
           (item) =>
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.ubicacion.toLowerCase().includes(searchTerm.toLowerCase())
         )
-        .slice(0, 8); // Mostrar solo 10 resultados
+        .slice(0, 8); 
     }
     setFilteredResults(results);
-  }, [searchTerm, products]);
+  }, [searchTerm, cafes]);
 
-  // Cerrar modal al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -72,9 +58,20 @@ const SearchBox = () => {
     navigate(`/cafe/${id}`);
   };
 
+  // Manejar estados de carga y error antes del return
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader className="animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) return null;
+
   return (
     <div className="relative w-full max-w-md mx-auto" ref={searchRef}>
-      {/* Input de Búsqueda */}
+      
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         <input
@@ -87,18 +84,16 @@ const SearchBox = () => {
         />
       </div>
 
-      {/* Modal de Resultados */}
       {showSearchModal && (
         <div className="absolute top-12 left-0 w-full bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 mt-2 z-50">
           <div className="p-3">
-            {/* Mostrar "Favoritos" si no hay búsqueda */}
+            
             {searchTerm.trim() === "" && (
               <div className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
                 Favoritos
               </div>
             )}
 
-            {/* Listado de Resultados */}
             {filteredResults.length > 0 ? (
               filteredResults.map((item) => (
                 <div

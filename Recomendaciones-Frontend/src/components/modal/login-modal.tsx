@@ -12,13 +12,13 @@ const LoginModal = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = (event:any) => {
     if (event.target.classList.contains("modal-overlay")) {
       setIsShowLogin(false);
     }
   };
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     try {
       const response = await fetch(`${API_URL}/api/authentication/v1/signin`, {

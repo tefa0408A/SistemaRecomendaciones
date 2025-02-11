@@ -1,13 +1,13 @@
 import { Button } from "../ui/button";
 import { NavLink, useNavigate } from "react-router";
 import { Menu, Moon, Sun, Camera, Pencil, Home } from "lucide-react";
-import { cn } from "../../lib/utils";
 import { useState } from "react";
 import { useTheme } from "../../context/theme-context";
 import { useAuth } from "../../context/auth-context";
 import Authenticacion from "../modal/authenticacion-modal";
 import UserLoggedIn from "./user";
 import SearchBox from "../funcionalidad/search-box";
+import { cn } from "../lib/utils";
 
 const Header = () => {
   const { isLoggedIn } = useAuth();

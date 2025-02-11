@@ -16,13 +16,13 @@ const CrearUsuario = () => {
   });
   const [error, setError] = useState("");
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = (event:any) => {
     if (event.target.classList.contains("modal-overlay")) {
       setIsShowRegister(false);
     }
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: any) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       setError("Las contraseñas no coinciden");
