@@ -6,6 +6,11 @@ const AuthContext = createContext();
 // Proveedor del contexto
 export function AuthProvider({ children }) {
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isShowLogin, setIsShowLogin] = useState(false);
+  const [isShowRegister, setIsShowRegister] = useState(false);
+
+
   // Función para verificar si el token es válido
   const isTokenValid = () => {
     const token = localStorage.getItem("token");
@@ -20,8 +25,21 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const obtenerNombre = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return false;
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1])); // Decodificar el JWT
+      const usuario = payload.userCreated // Comprobar si ha expirado
+      return usuario;
+    } catch (error) {
+      return "";
+    }
+  };
+
+
+  
 
   useEffect(() => {
     // Verificamos si el token es válido cuando la aplicación se monta
@@ -43,7 +61,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout, isTokenValid, isShowLogin, setIsShowLogin, isShowRegister, setIsShowRegister, obtenerNombre }}>
       {children}
     </AuthContext.Provider>
   );

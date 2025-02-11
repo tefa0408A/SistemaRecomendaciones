@@ -1,23 +1,33 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { withLayout } from '../HOC/withLayout';
-import { User } from 'lucide-react';
+import { Dot, MapPin, PhoneCall, Star, Store, User } from 'lucide-react';
+import BarraDeProgreso from '../components/externos/barra-progreso';
+import { useAuth } from "../context/auth-context";
 
 const CafeDetailPage = () => {
-  const API_URL = import.meta.env.VITE_API_CAFETERIA_URL as string;
+  const { isTokenValid, setIsShowLogin } = useAuth();
+
+  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string;
   const { id } = useParams();
 
   const [cafe, setCafe] = useState({});
-  const [opinionCount, setOpinionCount] = useState(1200); // Variable de opiniones
   const [opinion, setOpinion] = useState("");
-  const [restauranteRank, setRestauranteRank] = useState(3); // 3 de 5 estrellas
-  const [menuExpanded, setMenuExpanded] = useState(false); // Para mostrar todo el menú
-  const [comments, setComments] = useState([
-    { id: 1, userName: 'User A', rating: 4.5, commentDate: '22/08/2025', userPhoto: '', commentText: 'A' },
-    { id: 2, userName: 'User B', rating: 3.7, commentDate: '22/08/2025', userPhoto: '', commentText: 'c' },
-    { id: 3, userName: 'User C', rating: 5.0, commentDate: '22/08/2025', userPhoto: '', commentText: 'b' },
-  ]); // Comentarios
+  const [comments, setComments] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(5);
+  const [rating, setRating] = useState(0);
+  const [error, setError] = useState("");
 
+  // Función para actualizar la calificación
+  const handleClick = (index) => {
+    setRating(index);
+    setError(""); // Si selecciona, borra el error
+  };
+
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => prev + 5);
+  };
 
   // Función para manejar el cambio en el textarea
   const handleOpinionChange = (event) => {
@@ -26,39 +36,96 @@ const CafeDetailPage = () => {
 
   // Función para manejar la publicación de una nueva opinión
   const handlePublicar = () => {
-    if (opinion.trim()) {
-      const nuevoComentario = {
-        id: comments.length + 1, userName: 'User A', rating: 4.5, commentDate: '24/08/2025', userPhoto: '', commentText: opinion
-      };
-      setComments([nuevoComentario, ...comments]); // Agregar al inicio
-      setOpinion(""); // Limpiar el textarea después de publicar
-    }
-  };
 
-  // Cargar productos desde la API
-  useEffect(() => {
-    const fetchProducts = async () => {
+    if (!isTokenValid()) {
+      console.log("Token no es valido")
+      setIsShowLogin(true)
+      return;
+    }
+
+    if (opinion.trim() === "") {
+      setError("Debes escribir un comentario.");
+      return; 
+    }
+
+    if (rating === 0) {
+      setError("Debes seleccionar una calificación.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    const nuevoComentario = {
+      comentario: opinion.trim(),
+      calificacion: rating
+    };
+
+    //Almacenar en BD
+    const fetchReview = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/restaurant/v1/${id}`);
-        const data = await response.json();
-        setCafe(data);
+        const responseComentario = await fetch(`${API_URL}/api/restaurant/v1/${id}/comentario`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", 
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(nuevoComentario),
+        });
+
+        const dataComentario = await responseComentario.json();
+        setComments([dataComentario, ...comments]);
+        setOpinion(""); 
+        handleClick(0)
+
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching Review:", error);
       }
     };
 
-    fetchProducts();
+    fetchReview();
+  };
+
+  useEffect(() => {
+    const fetchCafe = async () => {
+      try {
+        const responseDatos = await fetch(`${API_URL}/api/restaurant/v1/${id}`);
+        const dataCafe = await responseDatos.json();
+        setCafe(dataCafe);
+
+        const responseComentarios = await fetch(`${API_URL}/api/restaurant/v1/${id}/comentarios`);
+        const dataComentarios = await responseComentarios.json();
+        setComments(dataComentarios);
+      } catch (error) {
+        console.error("Error fetching cafe:", error);
+      }
+    };
+
+    fetchCafe();
   }, []);
+
+
+  const formatFecha = (fechaISO) => {
+    const fecha = new Date(fechaISO);
+    const opciones = { day: "2-digit", month: "long", year: "numeric" };
+
+    return fecha.toLocaleDateString("es-ES", opciones);
+  };
 
   // Función para mostrar las estrellas
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    const emptyStars = 5 - fullStars;
+
+    const validRating = Number.isFinite(rating) ? Math.max(0, Math.min(5, rating)) : 0;
+    const fullStars = Math.floor(validRating);
+    const hasHalfStar = rating % 1 !== 0;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+
     return (
       <>
         {[...Array(fullStars)].map((_, i) => (
           <span key={`full-star-${i}`} className="text-yellow-500">★</span>
         ))}
+        {hasHalfStar && <span key="half-star" className="text-yellow-400">☆</span>}
         {[...Array(emptyStars)].map((_, i) => (
           <span key={`empty-star-${i}`} className="text-gray-300">★</span>
         ))}
@@ -66,142 +133,166 @@ const CafeDetailPage = () => {
     );
   };
 
+
+
   return (
-    <div className="p-6">
+    <div className="w-full max-w-[80%] mx-auto p-4">
       <h1 className="text-4xl font-semibold">{cafe.nombre}</h1>
 
-      <div className="flex items-center mt-2">
-        <div className="flex items-center">
-          {renderStars(restauranteRank)}
+      <div className="flex items-center mt-2 space-x-2 text-sm">
+        <div className="flex items-center space-x-1">
+          <Store className="h-4 w-4" />
+          {renderStars(cafe.promedio)}
         </div>
-        <span className="ml-2 text-sm">{opinionCount} opiniones</span>
-        <span className="ml-4 text-sm">#3 de 1000 restaurantes</span>
-      </div>
 
-      {/* Ubicación y teléfono */}
-      <div className="mt-4 flex items-center">
-        <a href="https://www.google.com/maps?q=ubicación-del-restaurante" className="flex items-center mr-4">
-          <i className="fas fa-map-marker-alt mr-2"></i>
-          Ubicación
-        </a>
-        <span className="mr-4">Celular: 971-727-355</span>
-        <a href="https://www.restaurantea.com" className="text-blue-500">Página Web</a>
-      </div>
+        <span className="inline-block h-4 w-px bg-gray-400"></span>
 
-      {/* Horarios */}
-      <div className="mt-6">
-        <h3 className="text-xl font-semibold">Horario</h3>
-        <ul className="list-disc ml-6">
-          <li>Lunes - Viernes: 10:00 AM - 9:00 PM</li>
-          <li>Sábado: 12:00 PM - 10:00 PM</li>
-          <li>Domingo: Cerrado</li>
-        </ul>
-      </div>
-
-      {/* Imágenes */}
-      <div className="mt-6">
-        <h3 className="text-xl font-semibold">Imágenes</h3>
-        <img src={cafe.imagenUrl} alt={cafe.nombre} className="w-full rounded-lg" />
-        <button className="mt-2 text-blue-500">Ver más imágenes</button>
-      </div>
-
-      {/* Calificaciones */}
-      <div className="mt-6 flex justify-between">
-        <div className="flex items-center">
-          {renderStars(4)} {/* Puedes ajustar las estrellas */}
-          <span className="ml-2">4 estrellas - 120 opiniones</span>
+        <div className="flex items-center space-x-1">
+          <MapPin className="h-4 w-4" />
+          <span>{cafe.ubicacion}</span>
         </div>
-        <div>
-          <h4 className="font-semibold">Detalles</h4>
-          <p>Cafería para disfrutar en familia, con un ambiente acogedor.</p>
+
+        <span className="inline-block h-4 w-px bg-gray-400"></span>
+
+        <div className="flex items-center space-x-1">
+          <PhoneCall className="h-4 w-4" />
+          <span>+51 971727355</span>
         </div>
       </div>
 
-      {/* Carta */}
-      <div className="mt-6">
-        <h3 className="text-xl font-semibold">Carta</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>Capuccino - S/ 12</div>
-          <div>Frapuccino - S/ 15</div>
-          <div>Empanada de pollo - S/ 12</div>
-          <div>Tres leches - S/ 18</div>
-          <div>Torta de chocolate - S/ 17</div>
+      <div className="mt-6 flex items-start space-x-6">
+        {/* Imagen */}
+        <div className="w-1/2">
+          <img
+            src={cafe.imagenUrl}
+            alt={cafe.nombre}
+            className="w-full rounded-lg object-cover"
+          />
+          {/* <button className="mt-2 text-blue-500 hover:underline">
+            Ver más imágenes
+          </button> */}
         </div>
-        {menuExpanded && (
-          <div className="mt-4">
-            <button onClick={() => setMenuExpanded(false)} className="text-blue-500">Ver menos</button>
-          </div>
-        )}
-        {!menuExpanded && (
-          <div className="mt-4">
-            <button onClick={() => setMenuExpanded(true)} className="text-blue-500">Mostrar todo el menú</button>
-          </div>
-        )}
+
+        <div className="w-1/2 p-4 bg-gray-100 rounded-lg">
+          {/* Horario */}
+          <h3 className="text-lg font-semibold">Horario:</h3>
+          <p className="text-gray-700 mt-2 space-y-1">
+            <span className="flex items-center space-x-2">
+              <Dot className="h-4 w-4" />
+              <span>Lunes a Viernes: 12pm - 10pm</span>
+            </span>
+            <span className="flex items-center space-x-2">
+              <Dot className="h-4 w-4" />
+              <span>Sábado y Domingo: 12pm - 12am</span>
+            </span>
+          </p>
+
+          {/* Rango de Precio */}
+          <h3 className="text-lg font-semibold mt-4">Rango de Precio:</h3>
+          <p className="text-gray-700 mt-2 space-y-1">
+            <span className="flex items-center space-x-2">
+              <Dot className="h-4 w-4" />
+              <span>Café: S/15 - S/20</span>
+            </span>
+            <span className="flex items-center space-x-2">
+              <Dot className="h-4 w-4" />
+              <span>Postres: S/18 - S/23</span>
+            </span>
+          </p>
+        </div>
+
       </div>
 
-      {/* Opiniones */}
-      <div className="mt-6">
-        <h3 className="text-xl font-semibold">Opiniones</h3>
-        <div className="flex">
-          <div className="w-1/2">
-            <h4>120 opiniones</h4>
-            {/* Barra de opiniones */}
-            <div className="my-2">Excelente: 500</div>
-            <div className="my-2">Bueno: 300</div>
-            <div className="my-2">Regular: 200</div>
-            <div className="my-2">Malo: 100</div>
-          </div>
+      <div className="mt-6 flex items-start space-x-6">
+        <div className="w-1/4 p-4 bg-gray-100 rounded-lg">
+          <BarraDeProgreso comments={comments} />
+        </div>
 
-          {/* Buscador de opiniones */}
-          <div className="w-1/2 ml-4">
-            <input type="text" placeholder="Buscar opiniones..." className="p-2 border rounded w-full" />
-            <div className="container mx-auto p-4">
-              {/* Área de texto para la opinión */}
-              <div className="mb-4">
-                <textarea
-                  value={opinion}
-                  onChange={handleOpinionChange}
-                  // rows="4"
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  placeholder="Escribe tu opinión..."
-                />
+        <div className="w-3/4 p-4 bg-gray-100 rounded-lg">
+          {/* <input type="text" placeholder="Buscar opiniones..." className="p-2 border rounded w-full" /> */}
+          
+          <div className="mt-4 mb-4 flex justify-between ">{/* p-4 border-t border-gray-300 */}
+            {/* Área de texto a la izquierda */}
+            <textarea
+              value={opinion}
+              onChange={handleOpinionChange}
+              rows={4}
+              className="w-4/5 p-2 border border-gray-300 rounded-lg"
+              placeholder="Escribe tu opinión..."
+            />
+
+            {/* Bloque derecho con estrellas, error y botón */}
+            <div className="w-1/5 flex flex-col items-center space-y-3">
+              {/* Estrellas */}
+              <div className="flex space-x-2 mt-2">
+                {[1, 2, 3, 4, 5].map((index) => (
+                  <Star
+                    key={index}
+                    className={`h-4 w-4 cursor-pointer ${index <= rating ? "text-yellow-500 fill-yellow-500" : "text-gray-400"}`}
+                    onClick={() => handleClick(index)}
+                  />
+                ))}
               </div>
 
-              {/* Botón para publicar */}
+              {/* Mensaje de error */}
+              {error && <p className="text-center text-red-500 text-sm">{error}</p>}
+
+              {/* Botón de enviar */}
               <button
                 onClick={handlePublicar}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg"
               >
-                Publicar
+                Enviar
               </button>
-              {/* Comentarios listados */}
-              <div className="mt-4">
-                {comments.slice(0, 10).map((comment, index) => (
-                  <div key={index} className="border-b py-4">
-                    <div className="flex items-center">
-                      {/* <img src={comment.userPhoto} alt={comment.userName} className="w-10 h-10 rounded-full mr-3" />
-                 */}
-                      <User />
-                      <div>
-                        <div className="font-semibold">{comment.userName} ({comment.userReviews} opiniones)</div>
-                        <div>{renderStars(comment.rating)} - {comment.commentDate}</div>
-                      </div>
-                    </div>
-                    <p className="mt-2 text-sm">{comment.commentText.slice(0, 100)}...</p>
-                    <button className="text-blue-500 mt-1">Ver más</button>
-                  </div>
-                ))}
-                <button className="mt-4 text-blue-500">Ver más opiniones</button>
-              </div>
-
             </div>
           </div>
 
 
+          {comments
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+            .slice(0, visibleCount).map((comment) => (
+              <div key={comment.id} className="mt-4 mb-4 p-4 border-t border-gray-300">
+                {/* Primera fila */}
+                <div className="flex items-center space-x-3">
+                  <User className="h-6 w-6 text-gray-600 flex-shrink-0" />
+                  <div>
+                    <span className="block font-semibold">{comment.usuario.nombres} {comment.usuario.apellidos}</span>
+                    <span>{renderStars(comment.calificacion)}</span>
+                  </div>
+                </div>
+
+                {/* Segunda fila: Comentario */}
+                <p className="mt-2 text-gray-800">{comment.comentario}</p>
+
+                {/* Tercera fila: Fecha */}
+                <span className="mt-1 text-sm text-gray-500">
+                  Escrito el {formatFecha(comment.fecha)}
+                </span>
+              </div>
+            ))}
+
+          {/* Botón "Ver más" */}
+          {visibleCount < comments.length && (
+            <button
+              onClick={handleShowMore}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+            >
+              Ver más
+            </button>
+          )}
+
+
+
+
         </div>
+
+
+
+
       </div>
+
     </div>
-    );
+  );
 };
 
-      export default withLayout(CafeDetailPage);
+export default withLayout(CafeDetailPage);

@@ -2,8 +2,10 @@ import { NavLink } from "react-router-dom";
 import { Button } from "../ui/button";
 import { User, UserIcon, LogOut } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../../context/auth-context";
 
-const UserLoggedIn = ({ logout }) => {
+const UserLoggedIn = () => {
+  const { logout, obtenerNombre } = useAuth()
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -27,15 +29,16 @@ const UserLoggedIn = ({ logout }) => {
   return (
     <div className="relative" ref={dropdownRef}>
       {/* Botón de Usuario */}
-      <Button
+      <button
         onClick={(e) => {
           e.stopPropagation();
           setShowDropdown(!showDropdown);
         }}
-        className="rounded-full bg-white hover:shadow-md transition"
+        className="p-2 rounded-full hover:bg-accent hover:shadow-md transition flex items-center space-x-2"
       >
         <User className="h-5 w-5 text-gray-700" />
-      </Button>
+        <span className="text-sm font-medium">{obtenerNombre()}</span>
+      </button>
 
       {/* Dropdown de Opciones */}
       {showDropdown && (

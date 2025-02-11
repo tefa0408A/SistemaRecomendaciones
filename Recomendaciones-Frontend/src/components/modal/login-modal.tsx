@@ -1,9 +1,12 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "../../context/auth-context";
 
-const LoginModal = ({ setShowLogin, setShowRegister, login }) => {
+const LoginModal = () => {
 
-  const API_URL = import.meta.env.VITE_API_AUTHENTICATION_URL as string
+  const {login, setIsShowLogin, setIsShowRegister } = useAuth()
+
+  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,7 +14,7 @@ const LoginModal = ({ setShowLogin, setShowRegister, login }) => {
 
   const handleClickOutside = (event) => {
     if (event.target.classList.contains("modal-overlay")) {
-      setShowLogin(false);
+      setIsShowLogin(false);
     }
   };
 
@@ -28,7 +31,7 @@ const LoginModal = ({ setShowLogin, setShowRegister, login }) => {
 
       if (response.ok) {
         login(data.token);
-        setShowLogin(false);
+        setIsShowLogin(false);
       } else {
         setError(data.message || "Credenciales incorrectas");
       }
@@ -49,7 +52,7 @@ const LoginModal = ({ setShowLogin, setShowRegister, login }) => {
       >
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-          onClick={() => setShowLogin(false)}
+          onClick={() => setIsShowLogin(false)}
         >
           <X />
         </button>
@@ -91,7 +94,7 @@ const LoginModal = ({ setShowLogin, setShowRegister, login }) => {
           </button>
         </form>
         <br />
-        <button onClick={() => { setShowLogin(false); setShowRegister(true); }}>
+        <button onClick={() => { setIsShowLogin(false); setIsShowRegister(true); }}>
           Crear cuenta
         </button>
       </div>

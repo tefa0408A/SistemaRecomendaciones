@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SearchBox = () => {
-  const API_URL = import.meta.env.VITE_API_CAFETERIA_URL as string;
+  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredResults, setFilteredResults] = useState<any[]>([]);
@@ -15,17 +15,17 @@ const SearchBox = () => {
 
   // Cargar productos desde la API
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchCafes = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/restaurant/v1`);
+        const response = await fetch(`${API_URL}/api/restaurant/v1/all`);
         const data = await response.json();
         setProducts(data);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching cafes:", error);
       }
     };
 
-    fetchProducts();
+    fetchCafes();
   }, []);
 
   // Filtrar productos en base al input

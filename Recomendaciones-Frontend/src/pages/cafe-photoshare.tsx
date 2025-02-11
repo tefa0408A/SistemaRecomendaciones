@@ -10,7 +10,7 @@ const CafePhotoUploadPage = () => {
   const [description, setDescription] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_CAFETERIA_URL;
+  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL;
 
   const handleSearchClick = () => setShowSearchModal(true);
   const handleItemClick = (item) => {

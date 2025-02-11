@@ -10,7 +10,7 @@ import UserLoggedIn from "./user";
 import SearchBox from "../funcionalidad/search-box";
 
 const Header = () => {
-  const { isLoggedIn, login, logout } = useAuth();
+  const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -89,9 +89,9 @@ const Header = () => {
           </NavLink>
 
           {isLoggedIn ? (
-            <UserLoggedIn logout={logout} />
+            <UserLoggedIn/>
           ) : (
-            <Authenticacion login={login} />
+            <Authenticacion/>
           )}
 
           <Button
