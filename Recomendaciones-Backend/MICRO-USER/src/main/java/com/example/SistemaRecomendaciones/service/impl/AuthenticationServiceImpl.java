@@ -14,6 +14,7 @@ import com.example.SistemaRecomendaciones.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public List<Usuario> todos() {
         return usuarioRepository.findAll();
     }
-
 
     @Override
     public SignInResponse signIn(SignInRequest signInRequest) {
