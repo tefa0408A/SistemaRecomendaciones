@@ -10,7 +10,7 @@ const CafePhotoUploadPage = () => {
   const [description, setDescription] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_CAFETERIA_URL;
+  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL;
 
   const handleSearchClick = () => setShowSearchModal(true);
   const handleItemClick = (item) => {
@@ -73,7 +73,7 @@ const CafePhotoUploadPage = () => {
   }, [searchTerm]);
 
   return (
-    <div className="flex p-6">
+    <div className="w-full max-w-[80%] mx-auto p-4 flex">
       {/* Panel izquierdo */}
       <div className="w-1/2 p-4">
         <h2 className="text-xl font-semibold">Comparte tus fotos</h2>
@@ -89,7 +89,7 @@ const CafePhotoUploadPage = () => {
       </div>
 
       {/* Panel derecho */}
-      <div className="w-1/2 p-4">
+      <div className="w-1/2 p-4 border-l">
         <h3 className="text-lg font-medium">¿Dónde tomaste estas fotos?</h3>
 
         <div className="mt-2">

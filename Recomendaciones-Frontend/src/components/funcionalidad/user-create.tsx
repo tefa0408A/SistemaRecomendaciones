@@ -1,8 +1,12 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "../../context/auth-context";
 
-const CrearUsuario = ({ setShowRegister, setShowLogin }) => {
-  const API_URL = import.meta.env.VITE_API_AUTHENTICATION_URL as string
+const CrearUsuario = () => {
+
+  const { setIsShowRegister, setIsShowLogin  } = useAuth();
+
+  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string
   const [formData, setFormData] = useState({
     nombres: "",
     apellidos: "",
@@ -12,13 +16,13 @@ const CrearUsuario = ({ setShowRegister, setShowLogin }) => {
   });
   const [error, setError] = useState("");
 
-  const handleClickOutside = (event) => {
+  const handleClickOutside = (event:any) => {
     if (event.target.classList.contains("modal-overlay")) {
-      setShowRegister(false);
+      setIsShowRegister(false);
     }
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: any) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       setError("Las contraseñas no coinciden");
@@ -35,8 +39,8 @@ const CrearUsuario = ({ setShowRegister, setShowLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
-        setShowRegister(false);
-        setShowLogin(true);
+        setIsShowRegister(false);
+        setIsShowLogin(true);
       } else {
         setError(data.message || "Error al crear la cuenta");
       }
@@ -59,7 +63,7 @@ const CrearUsuario = ({ setShowRegister, setShowLogin }) => {
         {/* Botón para cerrar el modal */}
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-          onClick={() => setShowRegister(false)}
+          onClick={() => setIsShowRegister(false)}
         >
           <X />
         </button>

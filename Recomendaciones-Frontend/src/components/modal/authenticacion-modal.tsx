@@ -2,26 +2,20 @@ import { useState } from "react";
 import Login from "./login-modal";
 import CrearUsuario from "../funcionalidad/user-create";
 import { Button } from "../ui/button";
+import { useAuth } from "../../context/auth-context";
 
-const Authenticacion = ({ login }) => {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
+const Authenticacion = () => {
+
+  const { isShowLogin, setIsShowLogin, isShowRegister } = useAuth()
 
   return (
     <div>
-      <Button onClick={() => setShowLogin(true)}>Iniciar Sesión</Button>
-      {showLogin && (
-        <Login
-          setShowLogin={setShowLogin}
-          setShowRegister={setShowRegister}
-          login={login}
-        />
+      <Button onClick={() => setIsShowLogin(true)}>Iniciar Sesión</Button>
+      {isShowLogin && (
+        <Login/>
       )}
-      {showRegister && (
-        <CrearUsuario
-          setShowRegister={setShowRegister}
-          setShowLogin={setShowLogin}
-        />
+      {isShowRegister && (
+        <CrearUsuario/>
       )}
     </div>
   );
