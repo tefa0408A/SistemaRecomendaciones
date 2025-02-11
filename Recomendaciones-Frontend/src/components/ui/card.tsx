@@ -15,7 +15,7 @@ const Card: React.FC<{ cafe: Cafe }> = ({ cafe }) => {
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{cafe.nombre}</div>
         <p className="text-gray-700 text-base">{cafe.ubicacion}</p>
-        <div className="flex space-x-1 mt-2">
+        <div className="flex space-x-1 mt-2 items-center">
           {[1, 2, 3, 4, 5].map((index) => {
             const filled =
               cafe.promedio >= index
@@ -31,6 +31,7 @@ const Card: React.FC<{ cafe: Cafe }> = ({ cafe }) => {
               />
             );
           })}
+          <div>{cafe.promedio}</div>
         </div>
         <button className="absolute bottom-4 right-4 px-6 py-2 border-2 border-black text-black bg-transparent text-sm md:text-base rounded-md transition duration-300 ease-in-out hover:bg-black hover:text-white active:bg-gray-900 active:text-white">
           Mostrar más
