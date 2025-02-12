@@ -47,6 +47,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(Constants.ENPOINTS_REVIEW_CREATED).hasAuthority(Role.USER.name())
                                 .requestMatchers(Constants.ENPOINTS_REVIEWBYRESTAURANT).permitAll()
                                 .requestMatchers(Constants.ENDPOINTS_RESTAURANTBYID).permitAll()
+                                .requestMatchers(Constants.ENPOINTS_RESTAURANT_DISTRICT).permitAll()
                                 .anyRequest().authenticated())
                 .sessionManagement(manager ->
                         manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

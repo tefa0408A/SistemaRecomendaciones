@@ -89,4 +89,9 @@ public class RestaurantController {
         }
         return new ResponseEntity<>(comentarios, HttpStatus.OK);
     }
+
+    @GetMapping("/distrito/{distrito}")
+    public List<Restaurant> getRestaurantByDistrito(@PathVariable String distrito) {
+        return restaurantService.getRestaurantByDistrito(distrito);
+    }
 }
