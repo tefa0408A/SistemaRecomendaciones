@@ -1,12 +1,20 @@
 
-import React from "react";
+import React, { useState } from "react";
+import CafeFilter from "../pages/cafe-filter";
 import { useCafes } from "../hook/use-cafe";
 import Card from "../components/ui/card";
+import type { Cafe } from "../components/lib/types";
 import { withLayout } from "../HOC/withLayout";
 
-const Home: React.FC = () => {
 
-  const { data: cafes, isLoading, error } = useCafes()
+
+const Home: React.FC = () => {
+  const { data: cafes, isLoading, error } = useCafes("");
+  const [filteredCafes, setFilteredCafes] = useState<Cafe[]>([]);
+
+  const handleFilterUpdate = (cafes: Cafe[]) => {
+    setFilteredCafes(cafes);
+  };
 
   const scrollToContent = () => {
     const content = document.getElementById("content");
@@ -36,19 +44,28 @@ const Home: React.FC = () => {
         </div>
         <div
           id="content"
-          className="w-full min-h-screen bg-white flex flex-col items-center justify-center p-10"
+          className="w-full min-h-screen bg-white flex flex-col items-start justify-start p-10"
         >
-          {isLoading ? (
-            <p className="text-2xl">Cargando...</p>
-          ) : error ? (
-            <p className="text-2xl text-red-500">Error al cargar cafés</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {cafes?.map((cafe) => (
-                <Card key={cafe.id} cafe={cafe} />
-              ))}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-20 w-full">
+            <div className="col-span-1">
+                <CafeFilter onUpdate={handleFilterUpdate} />
             </div>
-          )}
+            <div className="col-span-3">
+              {isLoading ? (
+                <p className="text-2xl">Cargando...</p>
+              ) : error ? (
+                <p className="text-2xl text-red-500">Error al cargar cafés</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  {filteredCafes.length > 0
+                    ? filteredCafes.map((cafe) => (
+                        <Card key={cafe.id} cafe={cafe} />
+                      ))
+                    : cafes.map((cafe) => <Card key={cafe.id} cafe={cafe} />)}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -56,5 +73,3 @@ const Home: React.FC = () => {
 };
 
 export default withLayout(Home);
-
-
