@@ -15,6 +15,10 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
+  const handleSearch = (id: number) => {
+    navigate(`/cafe/${id}`);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between px-4">
@@ -34,7 +38,7 @@ const Header = () => {
         </div>
 
         <div className="hidden md:flex flex-1 justify-center">
-          <SearchBox />
+          <SearchBox handleSearch={handleSearch} />
         </div>
 
         <nav className={cn(

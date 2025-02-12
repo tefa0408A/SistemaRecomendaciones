@@ -3,7 +3,12 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCafes } from "../../hook/use-cafe";
 
-const SearchBox = () => {
+interface SearchBoxProps {
+  handleSearch: (id: number) => void;
+}
+
+const SearchBox = ({ handleSearch }: SearchBoxProps) => {
+
 
   const { data: cafes, isLoading, error } = useCafes();
 
@@ -53,9 +58,9 @@ const SearchBox = () => {
   };
 
   // Redirigir al producto seleccionado
-  const handleItemClick = (id: string) => {
+  const handleItemClick = (id: number) => {
     setShowSearchModal(false);
-    navigate(`/cafe/${id}`);
+    handleSearch(id);
   };
 
   // Manejar estados de carga y error antes del return

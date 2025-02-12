@@ -3,6 +3,7 @@ export interface Cafe {
   nombre: string
   imagenUrl: string
   ubicacion: string
+  distrito: string
   promedio: number
 }
 
