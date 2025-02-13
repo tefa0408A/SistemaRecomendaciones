@@ -62,7 +62,7 @@ const Header = () => {
             <span>Inicio</span>
           </NavLink>
 
-          <NavLink
+          {/* <NavLink
             to="/cafe/opinion"
             className={({ isActive }) =>
               cn(
@@ -75,7 +75,7 @@ const Header = () => {
           >
             <Pencil className="h-4 w-4" />
             <span>Escribir Opinión</span>
-          </NavLink>
+          </NavLink> */}
 
           <NavLink
             to="/cafe/photos/upload"

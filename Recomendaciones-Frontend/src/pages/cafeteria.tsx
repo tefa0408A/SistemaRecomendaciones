@@ -1,3 +1,4 @@
+import { Loader } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -16,7 +17,10 @@ const Cafeteria = () => {
   }, [id]);
 
   if (!product) {
-    return <div>Cargando...</div>;
+    return
+    <div className="flex justify-center items-center h-screen">
+      <Loader className="animate-spin" />
+    </div>;
   }
 
   return (

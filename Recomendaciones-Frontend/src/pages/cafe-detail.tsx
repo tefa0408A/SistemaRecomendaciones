@@ -147,7 +147,7 @@ const CafeDetailPage = () => {
 
         <div className="flex items-center space-x-1">
           <MapPin className="h-4 w-4" />
-          <span>{cafe.ubicacion}</span>
+          <span>{cafe.ubicacion}{" - "}{ cafe.distrito }</span>
         </div>
 
         <span className="inline-block h-4 w-px bg-gray-400"></span>

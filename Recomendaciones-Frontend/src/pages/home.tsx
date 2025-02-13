@@ -3,6 +3,7 @@ import React from "react";
 import { useCafes } from "../hook/use-cafe";
 import Card from "../components/ui/card";
 import { withLayout } from "../HOC/withLayout";
+import { Loader } from "lucide-react";
 
 const Home: React.FC = () => {
 
@@ -39,9 +40,13 @@ const Home: React.FC = () => {
           className="w-full min-h-screen bg-white flex flex-col items-center justify-center p-10"
         >
           {isLoading ? (
-            <p className="text-2xl">Cargando...</p>
+            <div className="flex justify-center items-center h-screen">
+              <Loader className="animate-spin" />
+            </div>
           ) : error ? (
-            <p className="text-2xl text-red-500">Error al cargar cafés</p>
+              <p className="text-2xl font-bold text-red-500 mt-4">
+                Ocurrió un error 😰
+              </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {cafes?.map((cafe) => (

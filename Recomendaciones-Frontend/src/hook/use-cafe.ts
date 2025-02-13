@@ -31,6 +31,7 @@ export function useCafe(id: number) {
             });
             if (!response.ok) throw new Error('Error fetching cafe');
             return response.json();
-        }
+        },
+        enabled: !!id,
     });
 }
