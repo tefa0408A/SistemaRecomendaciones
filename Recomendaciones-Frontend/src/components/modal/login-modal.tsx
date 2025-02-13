@@ -38,7 +38,7 @@ const LoginModal = () => {
         setError("Credenciales incorrectas");
       }
     } catch (err) {
-      setError("Error al conectar con el servidor");
+      setError("Credenciales incorrectas");
       console.error("Error en la petición:", err);
     }
   };

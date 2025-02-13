@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
-import { Dot, Loader, Plus, Share, X } from 'lucide-react';
+import { Dot, Loader, Plus, Share, Trash2 } from 'lucide-react';
 import { withLayout } from '../HOC/withLayout';
-import SearchBox from '../components/funcionalidad/search-box';
+import SearchBox from '../components/modal/search-box';
 import { useCafe } from '../hook/use-cafe';
 import { useSavePhoto, useUpPhoto } from '../hook/use-photo';
 import type { PhotoFormData } from '../components/lib/types';
@@ -101,7 +101,7 @@ const CafePhotoUploadPage = () => {
 
       const fileSizeMB = file.size / (1024 * 1024);
       if (fileSizeMB > MAX_FILE_SIZE_MB) {
-        showAlert(`La imagen ${file.name} supera los ${MAX_FILE_SIZE_MB}MB.`,"warning");
+        showAlert(`La imagen ${file.name} supera los ${MAX_FILE_SIZE_MB}MB.`, "warning");
         continue;
       }
 
@@ -223,7 +223,7 @@ const CafePhotoUploadPage = () => {
                     className="text-red-500 hover:text-red-700 p-2 mt-2 md:mt-0"
                     onClick={() => handleRemovePhoto(index)}
                   >
-                    <X className="w-7 h-7" />
+                    <Trash2 className="w-7 h-7" />
                   </button>
                 </div>
               ))}

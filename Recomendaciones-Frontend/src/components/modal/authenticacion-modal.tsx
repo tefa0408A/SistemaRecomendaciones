@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Login from "./login-modal";
-import CrearUsuario from "../funcionalidad/user-create";
+import CrearUsuario from "./user-create";
 import { Button } from "../ui/button";
 import { useAuth } from "../../context/auth-context";
 

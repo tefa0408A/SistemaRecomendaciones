@@ -58,7 +58,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
-      const usuario = payload.userCreated
+      const usuario = payload.user
       return usuario;
     } catch (error) {
       return "";

@@ -43,7 +43,7 @@ export function useCreateReview(idCafe:Number) {
                 body: JSON.stringify(reviewData)
             });
 
-            if (!response.ok) throw new Error('Error creating task');
+            if (!response.ok) throw new Error('Error creating review');
             return response.json() as Promise<Review>;
         },
         onSuccess: () => {

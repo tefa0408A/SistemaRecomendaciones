@@ -6,7 +6,7 @@ import { useTheme } from "../../context/theme-context";
 import { useAuth } from "../../context/auth-context";
 import Authenticacion from "../modal/authenticacion-modal";
 import UserLoggedIn from "./user";
-import SearchBox from "../funcionalidad/search-box";
+import SearchBox from "../modal/search-box";
 import { cn } from "../lib/utils";
 
 const Header = () => {
@@ -17,7 +17,7 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   const handleSearch = (id: number) => {
     navigate(`/cafe/${id}`);
   };
@@ -81,9 +81,9 @@ const Header = () => {
           </NavLink>
 
           {isLoggedIn ? (
-            <UserLoggedIn/>
+            <UserLoggedIn />
           ) : (
-            <Authenticacion/>
+            <Authenticacion />
           )}
 
           <Button
