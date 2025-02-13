@@ -1,6 +1,6 @@
 import { Button } from "../ui/button";
 import { NavLink, useNavigate } from "react-router";
-import { Menu, Moon, Sun, Camera, Pencil, Home } from "lucide-react";
+import { Menu, Moon, Sun, Camera, Home } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "../../context/theme-context";
 import { useAuth } from "../../context/auth-context";

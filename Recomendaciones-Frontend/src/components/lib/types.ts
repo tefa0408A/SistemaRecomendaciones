@@ -1,3 +1,12 @@
+export interface User{
+  id: number
+  nombres: string
+  apellidos: string
+  email: string
+  password: string
+  confirmPassword: string
+}
+
 export interface Cafe {
   id: number
   nombre: string
@@ -41,6 +50,15 @@ export interface Photo {
   }
 }
 
+export interface Auth{
+  email: string
+  password: string
+}
+
+export interface Login{
+  token: string
+}
+
 export interface PhotoServer{
   imageUrl: string 
   nombre: string
@@ -53,3 +71,5 @@ export type PhotoFormData = Pick<Photo, 'nombre' | 'descripcion' | 'file'> & {
     id: number
   }
 }
+
+export type UserFormData = Pick<User, 'nombres' | 'apellidos' | 'email' | 'password' | 'confirmPassword'>

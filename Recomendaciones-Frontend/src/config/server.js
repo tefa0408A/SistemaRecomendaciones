@@ -6,17 +6,14 @@ import { existsSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
-// Definir __dirname manualmente
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 const port = 5000;
 
-// Habilitar CORS
 app.use(cors());
 
-// Configurar Multer para guardar archivos en la carpeta "public/uploads"
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/uploads/"); // Carpeta donde se guardarán las imágenes

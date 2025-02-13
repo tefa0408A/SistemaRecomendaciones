@@ -1,12 +1,14 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../../context/auth-context";
+import { useLoginUser } from "../../hook/use.user";
+import type { Auth } from "../lib/types";
 
 const LoginModal = () => {
 
-  const {login, setIsShowLogin, setIsShowRegister } = useAuth()
-
-  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string
+  const { login, setIsShowLogin, setIsShowRegister } = useAuth()
+  
+  const createMutation = useLoginUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,19 +23,19 @@ const LoginModal = () => {
   const handleLogin = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_URL}/api/authentication/v1/signin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
 
-      const data = await response.json();
+      const loginForm: Auth = {
+        email: email,
+        password: password
+      }
 
-      if (response.ok) {
-        login(data.token);
+      const response = await createMutation.mutateAsync(loginForm);
+
+      if (response.token) {
+        login(response.token);
         setIsShowLogin(false);
       } else {
-        setError(data.message || "Credenciales incorrectas");
+        setError("Credenciales incorrectas");
       }
     } catch (err) {
       setError("Error al conectar con el servidor");

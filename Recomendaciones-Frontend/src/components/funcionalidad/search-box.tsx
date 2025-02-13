@@ -28,7 +28,7 @@ const SearchBox = ({ handleSearch }: SearchBoxProps) => {
         .filter(
           (item) =>
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.ubicacion.toLowerCase().includes(searchTerm.toLowerCase())
+            item.distrito.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .slice(0, 8); 
     }
@@ -115,7 +115,7 @@ const SearchBox = ({ handleSearch }: SearchBoxProps) => {
                     </span>
                     <br />
                     <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {item.ubicacion}
+                      {item.distrito}
                     </span>
                   </div>
                 </div>

@@ -1,19 +1,24 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../../context/auth-context";
+import { useCreateUser } from "../../hook/use.user";
+import type { UserFormData } from "../lib/types";
+
+const valorInicial: UserFormData = {
+  nombres: "",
+  apellidos: "",
+  email: "",
+  password: "",
+  confirmPassword: ""
+}
 
 const CrearUsuario = () => {
 
+  const createMutation = useCreateUser();
+
   const { setIsShowRegister, setIsShowLogin  } = useAuth();
 
-  const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string
-  const [formData, setFormData] = useState({
-    nombres: "",
-    apellidos: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [formData, setFormData] = useState(valorInicial);
   const [error, setError] = useState("");
 
   const handleClickOutside = (event:any) => {
@@ -30,19 +35,14 @@ const CrearUsuario = () => {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/authentication/v1/signupuser`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
 
-      const data = await response.json();
+      const response = await createMutation.mutateAsync(formData);
 
-      if (response.ok) {
+      if (response.id) {
         setIsShowRegister(false);
         setIsShowLogin(true);
       } else {
-        setError(data.message || "Error al crear la cuenta");
+        setError("Error al crear la cuenta");
       }
     } catch (err) {
       setError("Error de conexión con el servidor");
