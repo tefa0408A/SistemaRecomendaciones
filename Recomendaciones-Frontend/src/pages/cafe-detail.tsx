@@ -139,25 +139,24 @@ const CafeDetailPage = () => {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
+    <div className="w-full h-screen p-10 flex flex-col">
       <h1 className="text-2xl md:text-4xl font-semibold">{cafe.nombre}</h1>
 
       <div className="flex flex-col md:flex-row lg:items-center items-left md:items-start mt-2 space-y-4 md:space-y-0 md:space-x-4 text-sm">
-
         <div className="flex items-center space-x-1">
           <Store className="h-4 w-4" />
           {renderStars(cafe.promedio)}
         </div>
-
-        <span className="hidden sm:block inline-block h-4 w-px bg-gray-400"></span>
-
+        <span className="hidden sm:inline-block h-4 w-px bg-gray-400"></span>
         <div className="flex items-center space-x-1">
           <MapPin className="h-4 w-4" />
-          <span>{cafe.ubicacion}{" - "}{cafe.distrito}</span>
+          <span>
+            {cafe.ubicacion}
+            {" - "}
+            {cafe.distrito}
+          </span>
         </div>
-
-        <span className="hidden sm:block inline-block h-4 w-px bg-gray-400"></span>
-
+        <span className="hidden sm:inline-block h-4 w-px bg-gray-400"></span>
         <div className="flex items-center space-x-1">
           <PhoneCall className="h-4 w-4" />
           <span>+51 971727355</span>
@@ -165,15 +164,12 @@ const CafeDetailPage = () => {
       </div>
 
       <div className="mt-6 flex flex-col lg:flex-row items-start space-y-6 lg:space-y-0 lg:space-x-6">
-
-
         <div className="relative w-full lg:w-1/2">
           <img
             src={cafe.imagenUrl}
             alt={cafe.nombre}
-            className="w-full rounded-lg object-cover"
+            className="w-full h-full rounded-lg object-cover"
           />
-
           {photos && photos.length > 0 && (
             <button
               onClick={() => openModal(0)}
@@ -182,18 +178,17 @@ const CafeDetailPage = () => {
               <Plus size={16} /> Fotos
             </button>
           )}
-
           {photos && isOpenCarrousel && (
-            <Carrousel photos={photos}
+            <Carrousel
+              photos={photos}
               currentIndex={currentIndex}
               setCurrentIndex={setCurrentIndex}
-              closeModal={closeModal} />
+              closeModal={closeModal}
+            />
           )}
-
         </div>
 
         <div className="w-full lg:w-1/2 p-4 bg-gray-100 rounded-lg">
-
           <h3 className="text-lg font-semibold">Horario:</h3>
           <p className="text-gray-700 mt-2 space-y-1">
             <span className="flex items-center space-x-2">
@@ -205,8 +200,6 @@ const CafeDetailPage = () => {
               <span>Sábado y Domingo: 12pm - 12am</span>
             </span>
           </p>
-
-
           <h3 className="text-lg font-semibold mt-4">Rango de Precio:</h3>
           <p className="text-gray-700 mt-2 space-y-1">
             <span className="flex items-center space-x-2">
@@ -219,19 +212,14 @@ const CafeDetailPage = () => {
             </span>
           </p>
         </div>
-
       </div>
 
       <div className="mt-6 flex flex-col lg:flex-row items-start space-y-6 lg:space-y-0 lg:space-x-6">
-
         <div className="w-full lg:w-1/4 p-4 bg-gray-100 rounded-lg">
           <BarraDeProgreso comments={comments} />
         </div>
-
         <div className="w-full lg:w-3/4 p-4 bg-gray-100 rounded-lg">
-
           <div className="mt-4 mb-4 flex flex-col lg:flex-row justify-between space-y-4 lg:space-y-0">
-
             <textarea
               value={opinion}
               onChange={handleOpinionChange}
@@ -240,22 +228,25 @@ const CafeDetailPage = () => {
               className="w-full lg:w-4/5 p-2 border border-gray-300 rounded-lg"
               placeholder="Escribe tu opinión..."
             />
-
             <div className="w-full lg:w-1/5 flex flex-col items-center space-y-3">
-
               <div className="flex space-x-2 mt-2">
                 {[1, 2, 3, 4, 5].map((index) => (
                   <Star
                     key={index}
-                    className={`h-4 w-4 cursor-pointer ${index <= rating ? "text-yellow-500 fill-yellow-500" : "text-gray-400"}`}
+                    className={`h-4 w-4 cursor-pointer ${
+                      index <= rating
+                        ? "text-yellow-500 fill-yellow-500"
+                        : "text-gray-400"
+                    }`}
                     onClick={() => handleClickCalificacion(index)}
                   />
                 ))}
               </div>
-
-
-              {errorValidacion && <p className="text-center text-red-500 text-sm">{errorValidacion}</p>}
-
+              {errorValidacion && (
+                <p className="text-center text-red-500 text-sm">
+                  {errorValidacion}
+                </p>
+              )}
               <button
                 onClick={handlePublicar}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg"
@@ -265,27 +256,32 @@ const CafeDetailPage = () => {
             </div>
           </div>
 
-
           {comments
-            .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
-            .slice(0, visibleCount).map((comment) => (
-              <div key={comment.id} className="mt-4 mb-4 p-4 border-t border-gray-300">
+            .sort(
+              (a, b) =>
+                new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+            )
+            .slice(0, visibleCount)
+            .map((comment) => (
+              <div
+                key={comment.id}
+                className="mt-4 mb-4 p-4 border-t border-gray-300"
+              >
                 <div className="flex items-center space-x-3">
                   <User className="h-6 w-6 text-gray-600 flex-shrink-0" />
                   <div>
-                    <span className="block font-semibold">{comment.usuario.nombres} {comment.usuario.apellidos}</span>
+                    <span className="block font-semibold">
+                      {comment.usuario.nombres} {comment.usuario.apellidos}
+                    </span>
                     <span>{renderStars(comment.calificacion)}</span>
                   </div>
                 </div>
-
                 <p className="mt-2 text-gray-800">{comment.comentario}</p>
-
                 <span className="mt-1 text-sm text-gray-500">
                   Escrito el {FormatFecha(comment.fecha)}
                 </span>
               </div>
             ))}
-
           {visibleCount < comments.length && (
             <button
               onClick={handleShowMore}
