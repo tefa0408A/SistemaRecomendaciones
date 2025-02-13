@@ -30,7 +30,7 @@ const CafeFilter: React.FC<{ onUpdate: (cafes: Cafe[]) => void }> = ({
     if (selectedDistricts.length > 0) {
       fetchCafes(selectedDistricts);
     } else {
-      setCafes([]); // Resetea la lista de cafes si no hay distritos seleccionados
+      setCafes([]); 
     }
   }, [selectedDistricts]);
 

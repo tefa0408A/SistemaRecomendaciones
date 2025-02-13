@@ -29,18 +29,28 @@ const Home: React.FC = () => {
             "url(https://png.pngtree.com/background/20230518/original/pngtree-small-coffee-shop-with-wooden-tables-and-chairs-picture-image_2645160.jpg)"
         }}
       >
-        <div className="text-center text-white flex flex-col items-center justify-center min-h-screen">
-          <h1 className="text-4xl md:text-6xl font-bold">CAFEMANÍA</h1>
-          <p className="text-lg md:text-2xl mt-2">
-            Para los amantes del café y las buenas conversaciones
-          </p>
-          <button
-            onClick={scrollToContent}
-            className="mt-10 px-6 py-2 border-2 border-white text-white bg-transparent md:text-2xl rounded-md transition duration-300 ease-in-out hover:bg-white hover:text-black active:bg-gray-900 active:text-gray-900"
-          >
-            Descubramos cafeterias
-          </button>
+        
+        <div className="relative min-h-screen flex items-center justify-center">
+
+          <div className="absolute inset-0 bg-black/50"></div>
+
+
+          <div className="relative text-center text-white flex flex-col items-center justify-center w-full px-6">
+            <h1 className="text-5xl md:text-7xl font-bold drop-shadow-2xl shadow-black">
+              CAFEMANÍA
+            </h1>
+            <p className="text-xl md:text-3xl mt-4 font-bold drop-shadow-lg shadow-black">
+              Para los amantes del café y las buenas conversaciones
+            </p>
+            <button
+              onClick={scrollToContent}
+              className="mt-10 px-6 py-3 border-2 border-white text-white bg-transparent md:text-2xl rounded-md transition duration-300 ease-in-out hover:bg-white hover:text-black hover:shadow-xl active:bg-gray-900 active:text-gray-900"
+            >
+              Descubramos cafeterías
+            </button>
+          </div>
         </div>
+      </div>
         <div
           id="content"
           className="w-full min-h-screen bg-white flex flex-col items-start justify-start p-10"
@@ -70,7 +80,7 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      
     </div>
   );
 };
