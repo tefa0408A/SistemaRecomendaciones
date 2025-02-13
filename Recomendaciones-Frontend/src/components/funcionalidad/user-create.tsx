@@ -60,7 +60,7 @@ const CrearUsuario = () => {
         className="bg-white p-6 rounded-lg shadow-lg border border-gray-300 relative w-full max-w-sm max-h-[90vh] overflow-auto flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Botón para cerrar el modal */}
+
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
           onClick={() => setIsShowRegister(false)}
@@ -68,10 +68,9 @@ const CrearUsuario = () => {
           <X />
         </button>
 
-        {/* Título */}
+
         <h1 className="text-lg font-semibold mb-4 text-center">Crear Cuenta</h1>
 
-        {/* Formulario */}
         <form onSubmit={handleRegister} className="flex flex-col gap-4">
           <div className="flex flex-col">
             <label className="text-sm font-medium">Nombre</label>

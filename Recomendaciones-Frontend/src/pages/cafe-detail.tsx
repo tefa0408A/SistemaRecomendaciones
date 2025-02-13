@@ -11,26 +11,26 @@ import { useCafe } from '../hook/use-cafe';
 const CafeDetailPage = () => {
 
   const { id } = useParams();
-  const { data: reviews, isLoading: isLoadingReviews, error: errorReviews } = useReviews(Number(id));
-  const { data: cafe, isLoading: isLoadingCafe, error: errorCafe } = useCafe(Number(id));
-  const createMutation = useCreateReview(Number(id));
-
   const { isTokenValid, setIsShowLogin } = useAuth();
-  const navigate = useNavigate()
+
+  const createMutation = useCreateReview(Number(id));
   
+  const { data: cafe, isLoading: isLoadingCafe, error: errorCafe } = useCafe(Number(id));
+  const { data: reviews, isLoading: isLoadingReviews, error: errorReviews } = useReviews(Number(id));
+  
+  const navigate = useNavigate()
+
   const [opinion, setOpinion] = useState("");
   const [comments, setComments] = useState<Review[]>([]);
-
-  
 
   const [visibleCount, setVisibleCount] = useState(5);
   const [rating, setRating] = useState(0);
   const [errorValidacion, setErrorValidacion] = useState("");
 
-  // Función para actualizar la calificación
-  const handleClick = (index : number) => {
+
+  const handleClickCalificacion = (index : number) => {
     setRating(index);
-    setErrorValidacion(""); // Si selecciona, borra el error
+    setErrorValidacion(""); 
   };
 
 
@@ -38,12 +38,12 @@ const CafeDetailPage = () => {
     setVisibleCount((prev) => prev + 5);
   };
 
-  // Función para manejar el cambio en el textarea
+
   const handleOpinionChange = (event: any) => {
     setOpinion(event.target.value);
   };
 
-  // Función para manejar la publicación de una nueva opinión
+
   const handlePublicar = async () => {
 
     if (!isTokenValid()) {
@@ -72,7 +72,7 @@ const CafeDetailPage = () => {
       const dataComentario = await createMutation.mutateAsync(nuevoComentario);
       setComments([dataComentario, ...comments]);
       setOpinion("");
-      handleClick(0);
+      handleClickCalificacion(0);
 
     } catch (error: any) {
       console.log("Error al enviar la reseña: " + error.message);
@@ -93,10 +93,6 @@ const CafeDetailPage = () => {
       </div>
     );
   }
-  if (errorCafe || !cafe) {
-    navigate("/")
-    return;
-  }
 
   const formatFecha = (fechaISO: string) => {
     const fecha = new Date(fechaISO);
@@ -109,14 +105,13 @@ const CafeDetailPage = () => {
     return fecha.toLocaleDateString("es-ES", opciones);
   };
 
-  // Función para mostrar las estrellas
+
   const renderStars = (rating:any) => {
 
     const validRating = Number.isFinite(rating) ? Math.max(0, Math.min(5, rating)) : 0;
     const fullStars = Math.floor(validRating);
     const hasHalfStar = rating % 1 !== 0;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
 
     return (
       <>
@@ -131,7 +126,14 @@ const CafeDetailPage = () => {
     );
   };
 
+  if (errorReviews) {
+    console.log("Error al cargar comentario: ",errorReviews.message)
+  }
 
+  if (errorCafe || !cafe) {
+    navigate("/")
+    return;
+  }
 
   return (
     <div className="w-full max-w-[80%] mx-auto p-4">
@@ -159,20 +161,17 @@ const CafeDetailPage = () => {
       </div>
 
       <div className="mt-6 flex items-start space-x-6">
-        {/* Imagen */}
+        
         <div className="w-1/2">
           <img
             src={cafe.imagenUrl}
             alt={cafe.nombre}
             className="w-full rounded-lg object-cover"
           />
-          {/* <button className="mt-2 text-blue-500 hover:underline">
-            Ver más imágenes
-          </button> */}
         </div>
 
         <div className="w-1/2 p-4 bg-gray-100 rounded-lg">
-          {/* Horario */}
+          
           <h3 className="text-lg font-semibold">Horario:</h3>
           <p className="text-gray-700 mt-2 space-y-1">
             <span className="flex items-center space-x-2">
@@ -185,7 +184,7 @@ const CafeDetailPage = () => {
             </span>
           </p>
 
-          {/* Rango de Precio */}
+          
           <h3 className="text-lg font-semibold mt-4">Rango de Precio:</h3>
           <p className="text-gray-700 mt-2 space-y-1">
             <span className="flex items-center space-x-2">
@@ -207,10 +206,9 @@ const CafeDetailPage = () => {
         </div>
 
         <div className="w-3/4 p-4 bg-gray-100 rounded-lg">
-          {/* <input type="text" placeholder="Buscar opiniones..." className="p-2 border rounded w-full" /> */}
           
-          <div className="mt-4 mb-4 flex justify-between ">{/* p-4 border-t border-gray-300 */}
-            {/* Área de texto a la izquierda */}
+          <div className="mt-4 mb-4 flex justify-between ">
+            
             <textarea
               value={opinion}
               onChange={handleOpinionChange}
@@ -219,23 +217,21 @@ const CafeDetailPage = () => {
               placeholder="Escribe tu opinión..."
             />
 
-            {/* Bloque derecho con estrellas, error y botón */}
             <div className="w-1/5 flex flex-col items-center space-y-3">
-              {/* Estrellas */}
+
               <div className="flex space-x-2 mt-2">
                 {[1, 2, 3, 4, 5].map((index) => (
                   <Star
                     key={index}
                     className={`h-4 w-4 cursor-pointer ${index <= rating ? "text-yellow-500 fill-yellow-500" : "text-gray-400"}`}
-                    onClick={() => handleClick(index)}
+                    onClick={() => handleClickCalificacion(index)}
                   />
                 ))}
               </div>
 
-              {/* Mensaje de error */}
+              
               {errorValidacion && <p className="text-center text-red-500 text-sm">{errorValidacion}</p>}
-
-              {/* Botón de enviar */}
+              
               <button
                 onClick={handlePublicar}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg"
@@ -266,7 +262,6 @@ const CafeDetailPage = () => {
               </div>
             ))}
 
-          {/* Botón "Ver más" */}
           {visibleCount < comments.length && (
             <button
               onClick={handleShowMore}
@@ -275,17 +270,8 @@ const CafeDetailPage = () => {
               Ver más
             </button>
           )}
-
-
-
-
         </div>
-
-
-
-
       </div>
-
     </div>
   );
 };

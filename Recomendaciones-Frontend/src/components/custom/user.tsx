@@ -1,15 +1,16 @@
-import { NavLink } from "react-router-dom";
-import { Button } from "../ui/button";
-import { User, UserIcon, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/auth-context";
 
 const UserLoggedIn = () => {
+
   const { logout, obtenerNombre } = useAuth()
+  
   const [showDropdown, setShowDropdown] = useState(false);
+  
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Cerrar el dropdown al hacer clic fuera
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -26,9 +27,10 @@ const UserLoggedIn = () => {
     };
   }, [showDropdown]);
 
+  
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Botón de Usuario */}
+
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -40,16 +42,8 @@ const UserLoggedIn = () => {
         <span className="text-sm font-medium">{obtenerNombre()}</span>
       </button>
 
-      {/* Dropdown de Opciones */}
       {showDropdown && (
         <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200">
-          <NavLink
-            to="/perfil"
-            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-lg transition"
-          >
-            <UserIcon className="h-5 w-5" />
-            <span>Mi Perfil</span>
-          </NavLink>
           <button
             onClick={() => {
               logout();

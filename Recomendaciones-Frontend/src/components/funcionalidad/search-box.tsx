@@ -1,6 +1,5 @@
 import { Loader, Search } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { useCafes } from "../../hook/use-cafe";
 
 interface SearchBoxProps {
@@ -9,16 +8,15 @@ interface SearchBoxProps {
 
 const SearchBox = ({ handleSearch }: SearchBoxProps) => {
 
-
   const { data: cafes, isLoading, error } = useCafes();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredResults, setFilteredResults] = useState<any[]>([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
-  const navigate = useNavigate();
+
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Filtrar productos en base al input
+
   useEffect(() => {
     let results = [];
     if (!cafes) return;
@@ -52,18 +50,18 @@ const SearchBox = ({ handleSearch }: SearchBoxProps) => {
     };
   }, [showSearchModal]);
 
-  // Manejar clic en el input
+
   const handleSearchClick = () => {
     setShowSearchModal(true);
   };
 
-  // Redirigir al producto seleccionado
+
   const handleItemClick = (id: number) => {
     setShowSearchModal(false);
     handleSearch(id);
   };
 
-  // Manejar estados de carga y error antes del return
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">

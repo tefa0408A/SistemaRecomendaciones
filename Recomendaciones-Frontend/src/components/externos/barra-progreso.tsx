@@ -21,11 +21,11 @@ const BarraDeProgreso = ({ comments }: BarraDeProgresoProps) => {
 
   const nuevoObjeto = Object.keys(calificacionesMap)
     .map((key) => {
-      const numericKey = Number(key); // Convertir la clave a número
+      const numericKey = Number(key);
       return {
         key: numericKey,
-        nombre: calificacionesMap[numericKey], // Acceder con número
-        cantidad: conteo[numericKey] || 0, // Acceder con número
+        nombre: calificacionesMap[numericKey], 
+        cantidad: conteo[numericKey] || 0, 
       };
     })
     .sort((a, b) => b.key - a.key); 

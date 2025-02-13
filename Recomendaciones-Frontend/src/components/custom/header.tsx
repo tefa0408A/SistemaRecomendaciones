@@ -10,11 +10,14 @@ import SearchBox from "../funcionalidad/search-box";
 import { cn } from "../lib/utils";
 
 const Header = () => {
-  const { isLoggedIn } = useAuth();
+
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { isLoggedIn } = useAuth();
   const { theme, setTheme } = useTheme();
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
   const handleSearch = (id: number) => {
     navigate(`/cafe/${id}`);
   };
@@ -61,21 +64,6 @@ const Header = () => {
             <Home className="h-4 w-4" />
             <span>Inicio</span>
           </NavLink>
-
-          {/* <NavLink
-            to="/cafe/opinion"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-accent text-accent-foreground"
-                  : "hover:bg-accent hover:text-accent-foreground"
-              )
-            }
-          >
-            <Pencil className="h-4 w-4" />
-            <span>Escribir Opinión</span>
-          </NavLink> */}
 
           <NavLink
             to="/cafe/photos/upload"
