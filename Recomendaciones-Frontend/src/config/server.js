@@ -26,6 +26,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Ruta para manejar la subida de archivos
+// @ts-ignore
 app.post("/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No se subió ningún archivo" });
