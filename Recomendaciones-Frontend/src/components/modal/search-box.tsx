@@ -1,6 +1,6 @@
 import { Loader, Search } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useCafes } from "../../hook/use-cafe";
+import { useCafesAll } from "../../hook/use-cafe";
 
 interface SearchBoxProps {
   handleSearch: (id: number) => void;
@@ -8,7 +8,7 @@ interface SearchBoxProps {
 
 const SearchBox = ({ handleSearch }: SearchBoxProps) => {
 
-  const { data: cafes, isLoading, error } = useCafes();
+  const { data: cafes, isLoading, error } = useCafesAll();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredResults, setFilteredResults] = useState<any[]>([]);

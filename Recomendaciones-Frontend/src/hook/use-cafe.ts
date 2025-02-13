@@ -3,7 +3,7 @@ import type { Cafe } from '../components/lib/types';
 
 const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string;
 
-/*export function useCafes() {
+export function useCafesAll() {
     return useQuery<Cafe[]>({
         queryKey: ['cafes'],
         queryFn: async () => {
@@ -17,7 +17,7 @@ const API_URL = import.meta.env.VITE_API_SERVICIOS_URL as string;
             return response.json();
         }
     });
-}*/
+}
 
 export function useCafes(distrito: string) {
   return useQuery<Cafe[]>({
